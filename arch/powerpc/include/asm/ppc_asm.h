@@ -97,18 +97,26 @@ END_FW_FTR_SECTION_IFSET(FW_FEATURE_SPLPAR)
 #define REST_8GPRS(n, base)	REST_4GPRS(n, base); REST_4GPRS(n+4, base)
 #define REST_10GPRS(n, base)	REST_8GPRS(n, base); REST_2GPRS(n+8, base)
 
-#define SAVE_FPR(n, base)	stfd	n,THREAD_FPR0+8*TS_FPRWIDTH*(n)(base)
-#define SAVE_2FPRS(n, base)	SAVE_FPR(n, base); SAVE_FPR(n+1, base)
-#define SAVE_4FPRS(n, base)	SAVE_2FPRS(n, base); SAVE_2FPRS(n+2, base)
-#define SAVE_8FPRS(n, base)	SAVE_4FPRS(n, base); SAVE_4FPRS(n+4, base)
-#define SAVE_16FPRS(n, base)	SAVE_8FPRS(n, base); SAVE_8FPRS(n+8, base)
-#define SAVE_32FPRS(n, base)	SAVE_16FPRS(n, base); SAVE_16FPRS(n+16, base)
-#define REST_FPR(n, base)	lfd	n,THREAD_FPR0+8*TS_FPRWIDTH*(n)(base)
-#define REST_2FPRS(n, base)	REST_FPR(n, base); REST_FPR(n+1, base)
-#define REST_4FPRS(n, base)	REST_2FPRS(n, base); REST_2FPRS(n+2, base)
-#define REST_8FPRS(n, base)	REST_4FPRS(n, base); REST_4FPRS(n+4, base)
-#define REST_16FPRS(n, base)	REST_8FPRS(n, base); REST_8FPRS(n+8, base)
-#define REST_32FPRS(n, base)	REST_16FPRS(n, base); REST_16FPRS(n+16, base)
+#ifdef CONFIG_DOUBLE_FPU
+#define SAVE_FPR(n, b, base)	li b, THREAD_FPR0+(16*(n)); STFPDX(n, base, b)
+#define REST_FPR(n, b, base)	li b, THREAD_FPR0+(16*(n)); LFPDX(n, base, b)
+#else /* CONFIG_DOUBLE_FPU */
+#define SAVE_FPR(n, b, base)	stfd	n, THREAD_FPR0+8*TS_FPRWIDTH*(n)(base)
+#define REST_FPR(n, b, base)	lfd	n, THREAD_FPR0+8*TS_FPRWIDTH*(n)(base)
+#endif /* CONFIG_DOUBLE_FPU */
+
+#define SAVE_2FPRS(n, b, base)	SAVE_FPR(n, b, base); SAVE_FPR(n+1, b, base)
+#define SAVE_4FPRS(n, b, base)	SAVE_2FPRS(n, b, base); SAVE_2FPRS(n+2, b, base)
+#define SAVE_8FPRS(n, b, base)	SAVE_4FPRS(n, b, base); SAVE_4FPRS(n+4, b, base)
+#define SAVE_16FPRS(n, b, base)	SAVE_8FPRS(n, b, base); SAVE_8FPRS(n+8, b, base)
+#define SAVE_32FPRS(n, b, base)	SAVE_16FPRS(n, b, base); \
+				SAVE_16FPRS(n+16, b, base)
+#define REST_2FPRS(n, b, base)	REST_FPR(n, b, base); REST_FPR(n+1, b, base)
+#define REST_4FPRS(n, b, base)	REST_2FPRS(n, b, base); REST_2FPRS(n+2, b, base)
+#define REST_8FPRS(n, b, base)	REST_4FPRS(n, b, base); REST_4FPRS(n+4, b, base)
+#define REST_16FPRS(n, b, base)	REST_8FPRS(n, b, base); REST_8FPRS(n+8, b, base)
+#define REST_32FPRS(n, b, base)	REST_16FPRS(n, b, base); \
+				REST_16FPRS(n+16, b, base)
 
 #define SAVE_VR(n,b,base)	li b,THREAD_VR0+(16*(n));  stvx n,base,b
 #define SAVE_2VRS(n,b,base)	SAVE_VR(n,b,base); SAVE_VR(n+1,b,base)

@@ -169,6 +169,15 @@ config YOSEMITE
 	help
 	  This option enables support for the AMCC PPC440EP evaluation board.
 
+config	BGP
+	bool "Blue Gene/P"
+	depends on 44x
+	default n
+	select PPC_FPU
+	select PPC_DOUBLE_FPU
+	help
+	  This option enables support for the IBM BlueGene/P supercomputer.
+
 config ISS4xx
 	bool "ISS 4xx Simulator"
 	depends on (44x || 40x)

@@ -137,6 +137,10 @@ config PPC_FPU
 	bool
 	default y if PPC64
 
+config PPC_DOUBLE_FPU
+	bool "Bluegene/P Double FPU Support"
+	depends on BGP
+
 config FSL_EMB_PERFMON
 	bool "Freescale Embedded Perfmon"
 	depends on E500 || PPC_83xx

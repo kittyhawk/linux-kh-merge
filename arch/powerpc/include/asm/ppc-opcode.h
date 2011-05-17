@@ -56,6 +56,9 @@
 #define PPC_INST_TLBSRX_DOT		0x7c0006a5
 #define PPC_INST_XXLOR			0xf0000510
 
+#define PPC_INST_LFPDX			0x7c00039c
+#define PPC_INST_STFPDX			0x7c00079c
+
 /* macros to insert fields into opcodes */
 #define __PPC_RA(a)	(((a) & 0x1f) << 16)
 #define __PPC_RB(b)	(((b) & 0x1f) << 11)
@@ -125,5 +128,11 @@
 					       VSX_XX1((s), (a), (b)))
 #define XXLOR(t, a, b)		stringify_in_c(.long PPC_INST_XXLOR | \
 					       VSX_XX3((t), (a), (b)))
+
+#define LFPDX(t, a, b)		stringify_in_c(.long PPC_INST_LFPDX | \
+				    __PPC_RT(t) | __PPC_RA(a) | __PPC_RB(b)))
+#define STFPDX(t, a, b)		stringify_in_c(.long PPC_INST_STFPDX | \
+				    __PPC_RT(t) | __PPC_RA(a) | __PPC_RB(b)))
+
 
 #endif /* _ASM_POWERPC_PPC_OPCODE_H */
