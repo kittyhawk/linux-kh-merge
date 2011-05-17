@@ -506,7 +506,20 @@ _GLOBAL(clear_pages)
 	li	r0,PAGE_SIZE/L1_CACHE_BYTES
 	slw	r0,r0,r4
 	mtctr	r0
+#ifdef CONFIG_BGP_L1_WRITETHROUGH
+	/* assuming 32 byte cacheline */
+	li      r4, 0
+1:	stw     r4, 0(r3)
+	stw     r4, 4(r3)
+	stw     r4, 8(r3)
+	stw     r4, 12(r3)
+	stw     r4, 16(r3)
+	stw     r4, 20(r3)
+	stw     r4, 24(r3)
+	stw     r4, 28(r3)
+#else
 1:	dcbz	0,r3
+#endif /* CONFIG_BGP_L1_WRITETHROUGH */
 	addi	r3,r3,L1_CACHE_BYTES
 	bdnz	1b
 	blr
@@ -550,7 +563,9 @@ _GLOBAL(copy_page)
 	mtctr	r0
 1:
 	dcbt	r11,r4
+#ifndef CONFIG_BGP_L1_WRITETHROUGH
 	dcbz	r5,r3
+#endif /* CONFIG_BGP_L1_WRITETHROUGH */
 	COPY_16_BYTES
 #if L1_CACHE_BYTES >= 32
 	COPY_16_BYTES

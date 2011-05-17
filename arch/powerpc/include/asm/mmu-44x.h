@@ -8,6 +8,7 @@
 
 #define PPC44x_MMUCR_TID	0x000000ff
 #define PPC44x_MMUCR_STS	0x00010000
+#define PPC44x_MMUCR_U2		0x00200000
 
 #define	PPC44x_TLB_PAGEID	0
 #define	PPC44x_TLB_XLAT		1
@@ -32,6 +33,7 @@
 
 /* Storage attribute and access control fields */
 #define PPC44x_TLB_ATTR_MASK	0x0000ff80
+#define PPC44x_TLB_WL1		0x00100000	/* Write-through L1 */
 #define PPC44x_TLB_U0		0x00008000      /* User 0 */
 #define PPC44x_TLB_U1		0x00004000      /* User 1 */
 #define PPC44x_TLB_U2		0x00002000      /* User 2 */

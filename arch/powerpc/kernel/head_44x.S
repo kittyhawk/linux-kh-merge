@@ -429,7 +429,16 @@ finish_tlb_load_44x:
 	andi.	r10,r12,_PAGE_USER		/* User page ? */
 	beq	1f				/* nope, leave U bits empty */
 	rlwimi	r11,r11,3,26,28			/* yes, copy S bits to U */
-1:	tlbwe	r11,r13,PPC44x_TLB_ATTRIB	/* Write ATTRIB */
+1:
+#ifdef CONFIG_BGP_L1_WRITETHROUGH
+	andi.	r10, r11, PPC44x_TLB_I
+	bne	2f
+	oris    r11,r11,PPC44x_TLB_WL1@h	/* Add coherency for */
+						/* non-inhibited */
+	ori	r11,r11,PPC44x_TLB_U2|PPC44x_TLB_M
+2:
+#endif /* CONFIG_BGP_L1_WRITETHROUGH */
+	tlbwe	r11,r13,PPC44x_TLB_ATTRIB	/* Write ATTRIB */
 
 	/* Done...restore registers and get out of here.
 	*/
@@ -799,7 +808,11 @@ skpinv:	addi	r4,r4,1				/* Increment */
 	sync
 
 	/* Initialize MMUCR */
+#ifdef CONFIG_BGP_L1_WRITETHROUGH
+	lis	r5, PPC44x_MMUCR_U2@h
+#else
 	li	r5,0
+#endif /* CONFIG_BGP_L1_WRITETHROUGH */
 	mtspr	SPRN_MMUCR,r5
 	sync
 
@@ -814,7 +827,14 @@ skpinv:	addi	r4,r4,1				/* Increment */
 	/* attrib fields */
 	/* Added guarded bit to protect against speculative loads/stores */
 	li	r5,0
-	ori	r5,r5,(PPC44x_TLB_SW | PPC44x_TLB_SR | PPC44x_TLB_SX | PPC44x_TLB_G)
+#ifdef CONFIG_BGP_L1_WRITETHROUGH
+	ori	r5,r5,(PPC44x_TLB_SW | PPC44x_TLB_SR | PPC44x_TLB_SX | \
+						PPC44x_TLB_G | PPC44x_TLB_U2)
+	oris	r5,r5,PPC44x_TLB_WL1@h
+#else
+	ori	r5,r5,(PPC44x_TLB_SW | PPC44x_TLB_SR | PPC44x_TLB_SX | \
+			PPC44x_TLB_G)
+#endif /* CONFIG_BGP_L1_WRITETHROUGH
 
         li      r0,63                    /* TLB slot 63 */
 

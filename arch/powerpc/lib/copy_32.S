@@ -98,7 +98,11 @@ _GLOBAL(cacheable_memzero)
 	bdnz	4b
 3:	mtctr	r9
 	li	r7,4
+#ifdef CONFIG_BGP_L1_WRITETHROUGH
+10:
+#else
 10:	dcbz	r7,r6
+#endif /* CONFIG_L1_WRITETHROUGH */
 	addi	r6,r6,CACHELINE_BYTES
 	bdnz	10b
 	clrlwi	r5,r8,32-LG_CACHELINE_BYTES
@@ -187,7 +191,9 @@ _GLOBAL(cacheable_memcpy)
 	mtctr	r0
 	beq	63f
 53:
+#ifndef CONFIG_BGP_L1_WRITETHROUGH
 	dcbz	r11,r6
+#endif /* CONFIG_BGP_L1_WRITETHROUGH */
 	COPY_16_BYTES
 #if L1_CACHE_BYTES >= 32
 	COPY_16_BYTES
@@ -368,7 +374,11 @@ _GLOBAL(__copy_tofrom_user)
 	mtctr	r8
 
 53:	dcbt	r3,r4
+#ifdef CONFIG_BGP_L1_WRITETHROUGH
+54:
+#else
 54:	dcbz	r11,r6
+#endif
 	.section __ex_table,"a"
 	.align	2
 	.long	54b,105f

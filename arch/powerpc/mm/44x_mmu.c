@@ -80,9 +80,12 @@ static void __init ppc44x_pin_tlb(unsigned int virt, unsigned int phys)
 	:
 #ifdef CONFIG_PPC47x
 	: "r" (PPC47x_TLB2_S_RWX),
-#else
+#elseif CONFIG_BGP_L1_WRITETHROUGH
+	: "r" (PPC44x_TLB_SW | PPC44x_TLB_SR | PPC44x_TLB_SX | PPC44x_TLB_WL1 \
+		| PPC44x_TLB_U2 | PPC44x_TLB_M),
+#else /* neither CONFIG_PPC47x or CONFIG_BGP_L1_WRITETHROUGH */
 	: "r" (PPC44x_TLB_SW | PPC44x_TLB_SR | PPC44x_TLB_SX | PPC44x_TLB_G),
-#endif
+#endif /* CONFIG_PPC47x */
 	  "r" (phys),
 	  "r" (virt | PPC44x_TLB_VALID | PPC44x_TLB_256M),
 	  "r" (entry),

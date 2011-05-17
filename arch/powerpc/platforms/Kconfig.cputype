@@ -333,6 +333,7 @@ config NOT_COHERENT_CACHE
 	bool
 	depends on 4xx || 8xx || E200 || PPC_MPC512x || GAMECUBE_COMMON
 	default n if PPC_47x
+	default n if BGP
 	default y
 
 config CHECK_CACHE_COHERENCY
