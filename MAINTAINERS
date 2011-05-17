@@ -3863,6 +3863,14 @@ S:	Maintained
 F:	arch/powerpc/platforms/40x/
 F:	arch/powerpc/platforms/44x/
 
+LINUX FOR POWERPC BLUEGENE/P
+M:	Eric Van Hensbergen <ericvh@gmail.com>
+W:	http://bg-linux.anl-external.org/wiki/index.php/Main_Page
+L:	bg-linux@lists.anl-external.org
+T:	git git://git.kernel.org/pub/scm/linux/kernel/git/ericvh/bluegene.git
+S:	Maintained
+F:	arch/powerpc/platforms/44x/bgp*
+
 LINUX FOR POWERPC EMBEDDED XILINX VIRTEX
 M:	Grant Likely <grant.likely@secretlab.ca>
 W:	http://wiki.secretlab.ca/index.php/Linux_on_Xilinx_Virtex
