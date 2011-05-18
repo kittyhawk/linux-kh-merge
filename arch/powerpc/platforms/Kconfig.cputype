@@ -304,7 +304,7 @@ config PPC_PERF_CTRS
          This enables the powerpc-specific perf_event back-end.
 
 config SMP
-	depends on PPC_BOOK3S || PPC_BOOK3E || FSL_BOOKE || PPC_47x
+	depends on PPC_BOOK3S || PPC_BOOK3E || FSL_BOOKE || PPC_47x || BGP
 	bool "Symmetric multi-processing support"
 	---help---
 	  This enables support for systems with more than one CPU. If you have
